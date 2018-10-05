@@ -1,14 +1,16 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 class Car{
     String author;
     String date;
     String text;
     String favorite;
-    ArrayList<String> terms = new ArrayList<>();
+    HashSet<String> terms = new HashSet<>();
 
     public Car(String author,String date,String text,String favorite){
         this.author=author;
@@ -27,31 +29,32 @@ class Car{
     public void makeTerm(){
         String[] set = author.split(" ");
         for(int i=0;i<set.length;i++){
-            terms.add(set[i]);
+            terms.add(set[i].toLowerCase());
         }
         terms.add(date);
         String temp = text.replace(","," ");
         temp = temp.replace("."," ");
         set = temp.split(" ");
         for(int i=0;i<set.length;i++){
-            if(!set[i].equals("")) terms.add(set[i]);
+            if(!set[i].equals("")) terms.add(set[i].toLowerCase());
         }
         temp = favorite.replace(","," ");
         temp = temp.replace("."," ");
         set = temp.split(" ");
         for(int i=0;i<set.length;i++){
-            if(!set[i].equals("")) terms.add(set[i]);
+            if(!set[i].equals("")) terms.add(set[i].toLowerCase());
         }
     }
 }
 
 public class Main{
     static int count=0;
+    static ArrayList<Car> carList = new ArrayList<Car>();
+    static TreeMap<String,ArrayList<Integer>> dictionary = new TreeMap<>();
 
     public static void inputData(String file) throws FileNotFoundException {
         Scanner input = new Scanner(new File(file));
         input.nextLine();
-        ArrayList<Car> carList = new ArrayList<Car>();
         while(input.hasNextLine()) {
             input.nextLine();
             String date = input.nextLine();
@@ -97,6 +100,26 @@ public class Main{
         inputData("2007_chevrolet_impala");
         inputData("2007_chevrolet_malibu");
         System.out.println("Number of Car : "+count);
+        System.out.println("Number of Car : "+carList.size());
+        for(int i=0;i<carList.size();i++){
+            String[] set=carList.get(i).terms.toArray(new String[carList.get(i).terms.size()]);;
+            for(int j=0;j<set.length;j++){
+//                System.out.print(set[j]+" ");
+                if(dictionary.get(set[j])==null){
+                    ArrayList<Integer> value = new ArrayList<>();
+                    value.add(i);
+                    dictionary.put(set[j],value);
+                }
+                else{
+                    ArrayList value = dictionary.get(set[j]);
+                    value.add(i);
+                }
+            }
+//            System.out.println();
+        }
+        System.out.println();
+        System.out.println(dictionary.get("this"));
+        System.out.println(carList.get(0));
     }
 
 }
